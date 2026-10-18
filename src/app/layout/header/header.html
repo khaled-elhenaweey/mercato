@@ -122,24 +122,39 @@
     <!-- Actions -->
     <div class="flex items-center gap-2.5">
 
-      <!-- Cart -->
+      <!-- Cart Icon -->
       <button
         class="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition hover:bg-slate-50 hover:text-blue-900 shrink-0"
         aria-label="Shopping Cart">
         <mat-icon class="flex! items-center! justify-center!">shopping_cart</mat-icon>
-        <!-- Badge -->
         <span
-          class="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[11px] font-bold text-white shadow-sm">
-          3
-        </span>
+          class="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[11px] font-bold text-white shadow-sm">3</span>
       </button>
 
+      @if (authService.isLoggedIn()) {
+      <!-- User Profile & Logout -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <img [src]="authService.currentUser()?.image" alt="Avatar"
+            class="h-9 w-9 rounded-full border border-slate-200 object-cover" />
+          <span class="hidden text-sm font-semibold text-slate-700 md:inline">
+            {{ authService.currentUser()?.firstName }}
+          </span>
+        </div>
+        <button (click)="authService.logout()"
+          class="flex h-10 w-10 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-600 transition hover:bg-red-100 shrink-0"
+          title="Logout">
+          <mat-icon class="flex! items-center! justify-center! text-lg!">logout</mat-icon>
+        </button>
+      </div>
+      } @else {
       <!-- Sign In Button -->
-      <button
-        class="hidden sm:flex items-center gap-2 rounded-xl bg-blue-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 active:scale-95 shrink-0">
+      <a routerLink="/login"
+        class="flex items-center gap-2 rounded-xl bg-blue-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 active:scale-95 shrink-0">
         <mat-icon class="flex! items-center! justify-center! text-lg!">login</mat-icon>
         <span>Sign In</span>
-      </button>
+      </a>
+      }
 
       <!-- Mobile Menu Button -->
       <button
