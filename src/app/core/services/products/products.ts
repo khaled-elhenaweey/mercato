@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../api/api-service';
-import { ProductsResponse } from '../../models/product.model';
+import { Product, ProductsResponse, Category } from '../../models/product.model';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +9,36 @@ import { ProductsResponse } from '../../models/product.model';
 export class ProductsService {
   private apiService = inject(ApiService);
 
-  getProducts(limit: number = 12, skip: number = 0): Observable<ProductsResponse> {
-    return this.apiService.get<ProductsResponse>('/products', { limit, skip });
+  getCategories(): Observable<Category[]> {
+    return this.apiService.get<Category[]>('/products/categories');
+  }
+
+  getProducts(
+    limit: number = 12,
+    skip: number = 0,
+    sortBy?: string,
+    order?: 'asc' | 'desc',
+  ): Observable<ProductsResponse> {
+    let params: Record<string, any> = { limit, skip };
+    if (sortBy) {
+      params['sortBy'] = sortBy;
+      params['order'] = order || 'asc';
+    }
+    return this.apiService.get<ProductsResponse>('/products', params);
+  }
+
+  getProductsByCategory(
+    slug: string,
+    limit: number = 12,
+    skip: number = 0,
+    sortBy?: string,
+    order?: 'asc' | 'desc',
+  ): Observable<ProductsResponse> {
+    let params: Record<string, any> = { limit, skip };
+    if (sortBy) {
+      params['sortBy'] = sortBy;
+      params['order'] = order || 'asc';
+    }
+    return this.apiService.get<ProductsResponse>(`/products/category/${slug}`, params);
   }
 }

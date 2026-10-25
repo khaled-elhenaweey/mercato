@@ -1,0 +1,32 @@
+@if (totalPages() > 1) {
+<div class="flex items-center justify-center gap-2 mt-8">
+  <!-- Previous Button -->
+  <button mat-stroked-button [disabled]="currentPage() === 1" (click)="pageChange.emit(currentPage() - 1)"
+    class="rounded-xl! border-slate-200!">
+    <mat-icon>chevron_left</mat-icon>
+    Previous
+  </button>
+
+  <!-- Page Numbers -->
+  <div class="flex items-center gap-1">
+    @for (page of displayedPages(); track page) {
+    @if (page === -1) {
+    <span class="px-3 py-1 text-slate-400">...</span>
+    } @else {
+    <button (click)="pageChange.emit(page)" [class.bg-blue-900]="currentPage() === page"
+      [class.text-white]="currentPage() === page" [class.text-slate-700]="currentPage() !== page"
+      class="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold transition hover:bg-slate-100">
+      {{ page }}
+    </button>
+    }
+    }
+  </div>
+
+  <!-- Next Button -->
+  <button mat-stroked-button [disabled]="currentPage() === totalPages()" (click)="pageChange.emit(currentPage() + 1)"
+    class="rounded-xl! border-slate-200!">
+    Next
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+</div>
+}

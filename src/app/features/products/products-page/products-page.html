@@ -1,71 +1,100 @@
-<div class="space-y-8">
+<div class="space-y-6">
 
-  <!-- Page Title -->
-  <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+  <!-- Header & Sorting Bar -->
+  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-4">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">All Products</h1>
-      <p class="text-sm text-slate-500">Explore our wide collection of high quality items</p>
+      <h1 class="text-2xl font-bold text-slate-900">Explore Products</h1>
+      <p class="text-sm text-slate-500">
+        Showing {{ products().length }} of {{ total() }} products
+      </p>
+    </div>
+
+    <!-- Sort Bar -->
+    <div class="w-full md:w-64">
+      <mat-form-field appearance="outline" class="w-full text-sm!">
+        <mat-label>Sort By</mat-label>
+        <mat-select [value]="sortOption()" (selectionChange)="onSortChange($event.value)">
+          <mat-option value="default">Default</mat-option>
+          <mat-option value="price-asc">Price: Low to High</mat-option>
+          <mat-option value="price-desc">Price: High to Low</mat-option>
+          <mat-option value="rating-desc">Highest Rated</mat-option>
+          <mat-option value="title-asc">Name: A to Z</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
 
-  <!-- Error State -->
-  @if (error()) {
-  <div class="flex flex-col items-center justify-center rounded-2xl border border-red-100 bg-red-50 p-8 text-center">
-    <mat-icon class="text-4xl! text-red-500 mb-2">error_outline</mat-icon>
-    <p class="text-sm font-semibold text-red-700">{{ error() }}</p>
-    <button (click)="loadProducts()"
-      class="mt-4 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700">
-      Retry
-    </button>
-  </div>
-  }
+  <!-- Main Layout: Categories Sidebar + Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-  <!-- Loading Skeleton State -->
-  @if (loading()) {
-  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    @for (item of [1,2,3,4,5,6,7,8]; track $index) {
-    <app-product-skeleton />
-    }
-  </div>
-  }
+    <!-- 5. Categories Filter Component (Sidebar) -->
+    <div class="lg:col-span-1 space-y-2">
+      <h3 class="text-base font-bold text-slate-900 mb-4">Categories</h3>
+      <div class="flex lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0">
+        <button (click)="onCategoryChange(null)" [class.bg-blue-900]="selectedCategory() === null"
+          [class.text-white]="selectedCategory() === null" [class.bg-white]="selectedCategory() !== null"
+          [class.text-slate-700]="selectedCategory() !== null"
+          class="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold transition hover:bg-slate-50 shrink-0">
+          <span>All Categories</span>
+        </button>
 
-  <!-- Products Grid -->
-  @if (!loading() && !error()) {
-  @if (products().length > 0) {
-  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    @for (product of products(); track product.id) {
-    <app-product-card [product]="product" (addToCart)="onAddToCart($event)" />
-    }
-  </div>
-  } @else {
-  <!-- Empty State -->
-  <div
-    class="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-    <mat-icon class="text-5xl! text-slate-300 mb-2">inventory_2</mat-icon>
-    <p class="text-base font-semibold text-slate-700">No products found</p>
-  </div>
-  }
-  }
-
-  <!-- Defer Section -->
-  @defer (on viewport) {
-  <div class="mt-12 rounded-2xl bg-linear-to-r from-blue-900 to-indigo-800 p-8 text-white shadow-lg">
-    <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-      <div>
-        <span class="rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300">
-          Special Recommendation
-        </span>
-        <h2 class="mt-2 text-2xl font-bold">Recommended for You</h2>
-        <p class="text-sm text-blue-200">Get 20% off on your first order with coupon code <span
-            class="font-bold text-white">MERCATO20</span></p>
+        @for (cat of categories(); track cat.slug) {
+        <button (click)="onCategoryChange(cat.slug)" [class.bg-blue-900]="selectedCategory() === cat.slug"
+          [class.text-white]="selectedCategory() === cat.slug" [class.bg-white]="selectedCategory() !== cat.slug"
+          [class.text-slate-700]="selectedCategory() !== cat.slug"
+          class="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium transition hover:bg-slate-50 shrink-0">
+          <span class="truncate">{{ cat.name }}</span>
+        </button>
+        }
       </div>
-      <button class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-blue-900 shadow-sm hover:bg-slate-100">
-        Claim Offer
-      </button>
     </div>
+
+    <!-- Products Grid Area -->
+    <div class="lg:col-span-3 space-y-6">
+
+      <div #gridTop></div>
+
+      <!-- Error State -->
+      @if (error()) {
+      <div
+        class="flex flex-col items-center justify-center rounded-2xl border border-red-100 bg-red-50 p-8 text-center">
+        <mat-icon class="text-4xl! text-red-500 mb-2">error_outline</mat-icon>
+        <p class="text-sm font-semibold text-red-700">{{ error() }}</p>
+      </div>
+      }
+
+      <!-- Loading Skeleton -->
+      @if (loading()) {
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        @for (item of [1,2,3,4,5,6]; track $index) {
+        <app-product-skeleton />
+        }
+      </div>
+      }
+
+      <!-- Products Grid -->
+      @if (!loading() && !error()) {
+      @if (products().length > 0) {
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        @for (product of products(); track product.id) {
+        <app-product-card [product]="product" />
+        }
+      </div>
+
+      <!-- Pagination Component -->
+      <app-pagination [currentPage]="currentPage()" [total]="total()" [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)" />
+      } @else {
+      <div
+        class="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+        <mat-icon class="text-5xl! text-slate-300 mb-2">inventory_2</mat-icon>
+        <p class="text-base font-semibold text-slate-700">No products found in this category.</p>
+      </div>
+      }
+      }
+
+    </div>
+
   </div>
-  } @placeholder {
-  <div class="mt-12 h-32 w-full animate-pulse rounded-2xl bg-slate-200"></div>
-  }
 
 </div>
