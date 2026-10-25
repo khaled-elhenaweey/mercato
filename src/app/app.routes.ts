@@ -4,12 +4,22 @@ import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'products',
+    pathMatch: 'full',
+  },
+  {
+    path: 'products',
+    loadComponent: () =>
+      import('./features/products/products-page/products-page').then((m) => m.ProductsPage),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
     canActivate: [guestGuard],
   },
   {
     path: '**',
-    redirectTo: '',
+    redirectTo: 'products',
   },
 ];
