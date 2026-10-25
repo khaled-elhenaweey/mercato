@@ -41,4 +41,8 @@ export class ProductsService {
     }
     return this.apiService.get<ProductsResponse>(`/products/category/${slug}`, params);
   }
+
+  searchProducts(query: string, limit: number = 5): Observable<ProductsResponse> {
+    return this.apiService.get<ProductsResponse>('/products/search', { q: query, limit });
+  }
 }
