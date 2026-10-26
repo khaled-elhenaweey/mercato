@@ -1,0 +1,21 @@
+<div class="flex flex-col gap-4">
+  <!-- Main Large Image -->
+  <div
+    class="relative flex h-96 w-full items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-4">
+    <img [src]="images()[selectedIndex()]" alt="Product Image"
+      class="h-full w-full object-contain transition-all duration-300" />
+  </div>
+
+  <!-- Thumbnails Grid -->
+  @if (images().length > 1) {
+  <div class="flex gap-3 overflow-x-auto pb-2">
+    @for (img of images(); track $index) {
+    <button (click)="selectedIndex.set($index)" [class.border-blue-950]="selectedIndex() === $index"
+      [class.ring-2]="selectedIndex() === $index" [class.ring-blue-900]="selectedIndex() === $index"
+      class="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 transition hover:border-slate-400">
+      <img [src]="img" alt="Thumbnail" class="h-full w-full object-contain p-1" />
+    </button>
+    }
+  </div>
+  }
+</div>

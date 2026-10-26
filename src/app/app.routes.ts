@@ -19,6 +19,13 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   {
+    path: 'products/:id',
+    loadComponent: () =>
+      import('./features/products/product-detail-page/product-detail-page').then(
+        (m) => m.ProductDetailPage,
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'products',
   },

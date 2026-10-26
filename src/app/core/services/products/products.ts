@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from '../api/api-service';
 import { Product, ProductsResponse, Category } from '../../models/product.model';
 
@@ -44,5 +44,15 @@ export class ProductsService {
 
   searchProducts(query: string, limit: number = 5): Observable<ProductsResponse> {
     return this.apiService.get<ProductsResponse>('/products/search', { q: query, limit });
+  }
+
+  getProductById(id: number | string): Observable<Product> {
+    return this.apiService.get<Product>(`/products/${id}`);
+  }
+
+  getRelatedProducts(category: string, excludeId: number): Observable<Product[]> {
+    return this.apiService
+      .get<ProductsResponse>(`/products/category/${category}`)
+      .pipe(map((res) => res.products.filter((p) => p.id !== excludeId)));
   }
 }
