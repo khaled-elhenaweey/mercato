@@ -26,6 +26,10 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'cart',
+    loadComponent: () => import('./features/cart/cart-page/cart-page').then((m) => m.CartPage),
+  },
+  {
     path: '**',
     redirectTo: 'products',
   },

@@ -48,7 +48,7 @@
     </div>
 
     <!-- Add to Cart Button -->
-    <button (click)="$event.stopPropagation(); addToCart.emit(product())"
+    <button (click)="onAddToCart($event)"
       class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-100 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-blue-900 hover:text-white active:scale-95">
       <mat-icon class="text-lg! flex! items-center! justify-center!">add_shopping_cart</mat-icon>
       <span>Add to Cart</span>

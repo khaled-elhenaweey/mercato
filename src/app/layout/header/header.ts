@@ -3,6 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/services/auth/auth-service';
 import { RouterLink } from '@angular/router';
 import { SearchBar } from '../../shared/components/search-bar/search-bar';
+import { CartStore } from '../../core/services/cart/cart.store';
 
 @Component({
   selector: 'app-header',
@@ -12,4 +13,5 @@ import { SearchBar } from '../../shared/components/search-bar/search-bar';
 })
 export class Header {
   public authService = inject(AuthService);
+  public cartStore = inject(CartStore);
 }

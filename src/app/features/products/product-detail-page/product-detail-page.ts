@@ -7,6 +7,8 @@ import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { CartStore } from '../../../core/services/cart/cart.store';
+import { NotificationService } from '../../../core/services/notification/notification-service';
 
 @Component({
   selector: 'app-product-detail-page',
@@ -15,6 +17,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './product-detail-page.css',
 })
 export class ProductDetailPage {
+  private cartStore = inject(CartStore);
+  private notification = inject(NotificationService);
   // 2. id comes automatically as an input from Route via withComponentInputBinding()
   id = input.required<string>();
 
@@ -81,6 +85,7 @@ export class ProductDetailPage {
   }
 
   addToCart(product: Product) {
-    console.log(`Added ${this.quantity()} of ${product.title} to cart.`);
+    this.cartStore.addItem(product, 1);
+    this.notification.showError(product.title);
   }
 }
